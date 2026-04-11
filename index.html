@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>返校打掃管理系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .tab-active { border-bottom-width: 3px; }
+        .loading { display: none; }
+        .loading.active { display: block; }
+        @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade { animation: fade 0.3s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col font-sans">
+
+    <div class="max-w-6xl mx-auto py-10 px-4 flex-grow w-full">
+        <header class="text-center mb-10">
+            <h1 class="text-3xl font-black text-slate-900 tracking-tight">返校打掃管理系統</h1>
+            <p class="text-slate-400 mt-2 text-xs font-mono italic">國立陽明交通大學附屬竹北高級中等學校學務處衛生組</p>
+        </header>
+
+        <nav class="flex flex-wrap border-b border-slate-200 mb-8 justify-center gap-2 md:gap-8">
+            <button onclick="switchTab('query')" id="tab-query" class="tab-active py-2 px-4 font-bold border-blue-600 text-blue-600 transition">📢 公告查詢</button>
+            <button onclick="switchTab('allocation')" id="tab-allocation" class="py-2 px-4 font-bold text-slate-500 border-transparent transition">🎯 掃區分配</button>
+            <button onclick="switchTab('inspector')" id="tab-inspector" class="py-2 px-4 font-bold text-slate-500 border-transparent transition">🛂 區域覆核</button>
+            <button onclick="switchTab('admin')" id="tab-admin" class="py-2 px-4 font-bold text-slate-500 border-transparent transition">🔒 管理後台</button>
+        </nav>
+
+        <div id="loading-spinner" class="loading text-center py-4 text-blue-600 font-bold animate-pulse">📡 系統通訊中...</div>
+
+        <section id="view-query" class="tab-view space-y-8 animate-fade">
+            <div id="bulletin-board" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            <div class="bg-slate-200/50 rounded-[2.5rem] p-8 text-center border border-slate-200 shadow-inner">
+                <h2 class="text-xl font-black mb-4">🔍 個人打掃紀錄查詢</h2>
+                <div class="flex flex-col md:flex-row gap-2 justify-center max-w-md mx-auto">
+                    <input type="number" id="q-sid" placeholder="請輸入學號 (如 411001)" class="border p-4 rounded-3xl w-full text-center text-lg outline-none focus:ring-4 focus:ring-slate-800/10">
+                    <button onclick="handleQueryBySid()" class="bg-slate-800 text-white font-black px-10 py-4 rounded-3xl hover:bg-slate-900 transition active:scale-95 shadow-lg">查詢</button>
+                </div>
+                <div id="query-result" class="mt-8 hidden p-8 bg-white rounded-[2rem] border text-left shadow-xl max-w-lg mx-auto"></div>
+            </div>
+        </section>
+
+        <section id="view-allocation" class="tab-view hidden space-y-6 animate-fade">
+            <div class="bg-white shadow-2xl rounded-[2.5rem] p-8 md:p-12 border border-slate-100">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-black text-slate-800">🎯 衛生股長分配區域</h2>
+                    <p class="text-xs text-amber-600 mt-1 font-bold">※ 需輸入股長通行碼。分配後不可自行更改，請謹慎作業。</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <input type="number" id="stu-class" placeholder="班級" class="border p-4 rounded-2xl bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input type="number" id="stu-seat" placeholder="座號" class="border p-4 rounded-2xl bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                    <input type="password" id="alloc-passcode" placeholder="通行碼" class="border p-4 rounded-2xl bg-amber-50 outline-none focus:ring-4 focus:ring-amber-100">
+                    <div class="md:col-span-3">
+                        <select id="stu-area" class="w-full border p-5 rounded-2xl bg-slate-100 font-bold text-blue-700 outline-none focus:ring-2 focus:ring-blue-400"></select>
+                    </div>
+                </div>
+                <button onclick="handleAllocation()" class="mt-8 w-full bg-blue-600 text-white font-black py-5 rounded-[2rem] hover:bg-blue-700 transition shadow-xl active:scale-95">送出分配名單</button>
+            </div>
+        </section>
+
+        <section id="view-inspector" class="tab-view hidden space-y-4 animate-fade">
+            <div class="bg-white shadow-lg rounded-2xl p-6 border border-slate-100">
+                <label class="block text-xs font-black text-rose-500 mb-2 ml-1">👮 糾察員身分密碼</label>
+                <input type="password" id="inspector-pwd" placeholder="輸入糾察專屬密碼" class="w-full md:w-1/3 border p-4 rounded-2xl outline-none focus:ring-4 focus:ring-rose-50 bg-rose-50/20">
+            </div>
+            <div class="bg-white shadow-xl rounded-2xl p-6 border border-slate-100">
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <h2 class="text-xl font-bold">區域驗收列表</h2>
+                    <button onclick="fetchRegistrationsByArea()" class="text-blue-500 text-xs font-bold bg-blue-50 px-3 py-1.5 rounded-xl hover:bg-blue-100">刷新區域</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <tbody id="inspector-list"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-admin" class="tab-view hidden min-h-[500px]"></section>
+    </div>
+
+    <footer class="w-full py-10 border-t border-slate-200 bg-white mt-auto text-center">
+        <p class="text-slate-500 text-sm font-black mb-2">© 2026 國立陽明交大附中 軟體研究社</p>
+        <button onclick="toggleLicense(true)" class="text-slate-400 text-[10px] hover:text-blue-500 transition underline underline-offset-4">查看系統授權與免責聲明</button>
+    </footer>
+
+    <script src="scripts.js"></script>
+
+    <div id="license-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2rem] max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl animate-fade">
+            <div class="p-6 border-b flex justify-between items-center bg-slate-50">
+                <h3 class="font-black text-slate-800">📜 軟體使用協議</h3>
+                <button onclick="toggleLicense(false)" class="text-slate-400 text-3xl leading-none">&times;</button>
+            </div>
+            <div class="p-8 overflow-y-auto text-sm leading-relaxed text-slate-600 space-y-6">
+                <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
+                    <h4 class="font-bold text-blue-700 mb-2">🛡️ 資料使用聲明</h4>
+                    <p>本系統所記錄之學籍資料（班級、座號、學號）僅供校內返校打掃行政管理使用。所有簽到退紀錄與分配狀態受資料庫 Row Level Security 保護。</p>
+                </div>
+                <p>1. 使用者責任：衛生股長與糾察員應負起保密通行碼之責任。任何因密碼外洩導致之錯誤由當事人負責。</p>
+                <hr>
+                <p class="text-center text-[10px] text-slate-400 italic">Copyright © 2026 陽明交大附中軟體研究社. All rights reserved. Unauthorized copying of this file is strictly prohibited.</p>
+            </div>
+            <div class="p-6 border-t bg-slate-50 text-center">
+                <button onclick="toggleLicense(false)" class="bg-slate-800 text-white px-12 py-3 rounded-2xl font-bold shadow-lg active:scale-95 transition">我已閱讀並同意</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
