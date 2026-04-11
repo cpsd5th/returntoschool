@@ -7,15 +7,7 @@
     <title>國立陽明交大附中返校打掃管理系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        .tab-active { border-bottom-width: 3px; }
-        .loading { display: none; }
-        .loading.active { display: block; }
-        @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade { animation: fade 0.3s ease-out forwards; }
-        /* 隱藏捲動條但保留功能 */
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col font-sans">
@@ -37,9 +29,6 @@
                 class="py-2 px-4 font-bold text-slate-500 border-transparent border-b-2 transition duration-300">🔒 管理後台</button>
         </nav>
 
-        <div id="loading-spinner" class="loading text-center py-4 text-blue-600 font-bold animate-pulse">
-            系統通訊中，請稍候...
-        </div>
 
         <section id="view-query" class="tab-view space-y-8 animate-fade">
             <div id="bulletin-board" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -53,7 +42,7 @@
                         <input type="number" id="q-sid" placeholder="請輸入學號" 
                             class="border p-4 rounded-3xl w-full text-center text-lg outline-none focus:ring-4 focus:ring-slate-800/10">
                         <button onclick="handleQueryBySid()" 
-                            class="bg-slate-800 text-white font-black px-10 py-4 rounded-3xl hover:bg-slate-900 transition active:scale-95 shadow-lg">執行查詢</button>
+                            class="bg-slate-800 text-white font-black px-10 py-4 rounded-3xl hover:bg-slate-900 transition active:scale-95 shadow-lg">查詢</button>
                     </div>
                 </div>
                 <div id="query-result" class="mt-8 hidden p-8 bg-white rounded-[2rem] border text-left shadow-xl max-w-lg mx-auto animate-fade"></div>

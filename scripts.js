@@ -407,13 +407,13 @@ async function handleQueryBySid() {
             
             const borderClass = isCompleted ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200';
             const textClass = isCompleted ? 'text-emerald-700' : 'text-rose-600';
-            const statusLabel = isCompleted ? '[已完成簽退]' : '[未完成或未出席]';
+            const statusLabel = isCompleted ? '[已簽退]' : '[未完成]';
             
             resultHtml += `
                 <div class="p-3 rounded-2xl border ${borderClass}">
                     <p class="text-xs font-bold ${textClass}">${statusLabel} ${sessionName}</p>
                     <p class="text-[10px] text-slate-500 mt-1 font-mono">
-                        進場紀錄：${formatDateTime(logMatch?.check_in)} / 離場紀錄：${formatDateTime(logMatch?.check_out)}
+                        簽到時間：${formatDateTime(logMatch?.check_in)} / 簽退時間：${formatDateTime(logMatch?.check_out)}
                     </p>
                 </div>
             `;
@@ -868,7 +868,7 @@ async function loadRollCall() {
                 <tr class="border-b hover:bg-slate-50 transition">
                     <td class="p-3 align-middle">
                         <div class="font-bold text-slate-800">${stu.class_name} 班 ${stu.seat_number} 號</div>
-                        <div class="text-[10px] text-slate-400 font-mono mt-0.5">系統識別碼：${stu.student_id}</div>
+                        <div class="text-[10px] text-slate-400 font-mono mt-0.5">學號：${stu.student_id}</div>
                     </td>
                     <td class="p-3 align-middle">
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${roleStyleClass}">${stu.role}</span>

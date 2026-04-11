@@ -1,45 +1,94 @@
+/* 核心變數設定 */
+:root {
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --bg-main: #f8fafc;
+    --border-color: #e2e8f0;
+    --text-dark: #0f172a;
+    --text-slate: #64748b;
+    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* 全域設定 */
+body {
+    background-color: var(--bg-main) !important;
+    color: var(--text-dark) !important;
+    font-family: "Inter", -apple-system, sans-serif;
+}
+
+/* 導覽列：縮小高度 */
+nav {
+    display: flex !important;
+    background: #ffffff;
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    margin: 0 auto 32px auto;
+    width: fit-content;
+}
+
+nav button {
+    padding: 8px 16px !important; /* 縮小導覽按鈕 */
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    border: none !important;
+    background: transparent !important;
+    color: var(--text-slate) !important;
+}
+
 .tab-active {
-    border-bottom: 2px solid #3b82f6;
-    color: #3b82f6;
+    background-color: #eff6ff !important;
+    color: var(--primary) !important;
 }
 
-.loading {
-    display: none;
+/* 卡片設計 */
+.bg-white, section > div, .bg-slate-100 {
+    background: #ffffff !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--card-shadow) !important;
+    padding: 24px !important; /* 縮小內距讓視覺更緊湊 */
+    margin-bottom: 24px !important;
 }
 
-.loading.active {
-    display: block;
+/* 輸入框 */
+input, select {
+    background: #ffffff !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    padding: 10px !important; /* 縮小輸入框高度 */
+    font-size: 14px !important;
+    outline: none !important;
 }
 
-.role-badge {
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 10px;
-    font-weight: bold;
+/* 功能按鈕：顯著縮小尺寸 */
+button:not(nav button) {
+    background-color: var(--primary) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    padding: 8px 18px !important; /* 核心修改：大幅縮減內距 */
+    font-size: 14px !important;    /* 核心修改：字體微調 */
+    border-radius: 8px !important;
+    border: none !important;
+    cursor: pointer;
+    width: auto !important;        /* 核心修改：取消強制滿幅 */
+    display: inline-block !important;
+    transition: background-color 0.2s ease !important;
 }
 
-.role-health {
-    background: #dcfce7;
-    color: #166534;
+button:not(nav button):hover {
+    background-color: var(--primary-hover) !important;
 }
 
-.role-env {
-    background: #dbeafe;
-    color: #1e40af;
+/* 標題 */
+h1 {
+    font-size: 24px !important; /* 標題也同步微調，避免頭重腳輕 */
+    font-weight: 800 !important;
+    color: #000000 !important;
 }
 
-.animate-fade {
-    animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(5px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* 表格 */
+tr {
+    border-bottom: 1px solid var(--border-color) !important;
 }
