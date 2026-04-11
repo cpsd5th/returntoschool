@@ -7,9 +7,9 @@
  * 4. 系統管理後台 (系統管理員/教師限定)
  */
 
-var _0xcg_0xf1c=(724144^724151)+(452457^452457)
-const SUPABASE_URL="\u0068\u0074\u0074\u0070\u0073\u003A\u002F\u002F\u0076\u0072\u0062\u006D\u0077\u0078\u0063\u0078\u007A\u0061\u0068\u0072\u0065\u006F\u0070\u0075\u0067\u0076\u006E\u006C\u002E\u0073\u0075\u0070\u0061\u0062\u0061\u0073\u0065\u002E\u0063\u006F";_0xcg_0xf1c=426011^426012;let _0x0b_0x467;
-const SUPABASE_ANON_KEY="\u0073\u0062\u005F\u0070\u0075\u0062\u006C\u0069\u0073\u0068\u0061\u0062\u006C\u0065\u005F\u006B\u0035\u0076\u0047\u004E\u004A\u0051\u006A\u0070\u0046\u005A\u0078\u007A\u0078\u0047\u0074\u0070\u0045\u0036\u006E\u0041\u0041\u005F\u006C\u0079\u0075\u004E\u0037\u006E\u005A\u0049";_0x0b_0x467=(324501^324502)+(321251^321252);
+var _0xcg_0xf1c = (724144 ^ 724151) + (452457 ^ 452457)
+const SUPABASE_URL = "\u0068\u0074\u0074\u0070\u0073\u003A\u002F\u002F\u0076\u0072\u0062\u006D\u0077\u0078\u0063\u0078\u007A\u0061\u0068\u0072\u0065\u006F\u0070\u0075\u0067\u0076\u006E\u006C\u002E\u0073\u0075\u0070\u0061\u0062\u0061\u0073\u0065\u002E\u0063\u006F"; _0xcg_0xf1c = 426011 ^ 426012; let _0x0b_0x467;
+const SUPABASE_ANON_KEY = "\u0073\u0062\u005F\u0070\u0075\u0062\u006C\u0069\u0073\u0068\u0061\u0062\u006C\u0065\u005F\u006B\u0035\u0076\u0047\u004E\u004A\u0051\u006A\u0070\u0046\u005A\u0078\u007A\u0078\u0047\u0074\u0070\u0045\u0036\u006E\u0041\u0041\u005F\u006C\u0079\u0075\u004E\u0037\u006E\u005A\u0049"; _0x0b_0x467 = (324501 ^ 324502) + (321251 ^ 321252);
 const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let allAreas = [];
@@ -211,20 +211,20 @@ async function switchTab(tab) {
         if (!authData.session) {
             const email = prompt("系統管理員身分驗證，請輸入註冊的電子郵件：");
             if (!email) return;
-            
+
             const pwd = prompt("請輸入系統管理員密碼：");
             if (!pwd) return;
-            
+
             toggleLoading(true);
             const { error: signInError } = await _supabase.auth.signInWithPassword({ email: email, password: pwd });
             toggleLoading(false);
-            
+
             if (signInError) {
                 alert("驗證拒絕：電子郵件或密碼輸入錯誤，請重新嘗試。");
                 return;
             }
         }
-        
+
         // 驗證成功後注入管理員介面 HTML
         const adminView = document.getElementById('view-admin');
         if (adminView && adminView.innerHTML.trim() === "") {
@@ -237,20 +237,20 @@ async function switchTab(tab) {
     for (let i = 0; i < allViews.length; i++) {
         allViews[i].classList.add('hidden');
     }
-    
+
     // 顯示指定的目標分頁
     const targetView = document.getElementById(`view-${tab}`);
     if (targetView) {
         targetView.classList.remove('hidden');
     }
-    
+
     // 重設導覽列按鈕樣式
     const navButtons = document.querySelectorAll('nav button');
     for (let j = 0; j < navButtons.length; j++) {
         navButtons[j].classList.remove('tab-active', 'text-blue-600', 'border-blue-600');
         navButtons[j].classList.add('text-slate-500', 'border-transparent');
     }
-    
+
     // 突顯當前選擇的導覽按鈕
     const targetButton = document.getElementById(`tab-${tab}`);
     if (targetButton) {
@@ -276,7 +276,7 @@ async function switchTab(tab) {
 async function handleLogout() {
     const isConfirmed = confirm("即將登出系統管理員身分並鎖定後台，確定執行？");
     if (!isConfirmed) return;
-    
+
     try {
         await _supabase.auth.signOut();
         const adminView = document.getElementById('view-admin');
@@ -302,17 +302,17 @@ async function fetchAnnouncements() {
         const { data, error } = await _supabase.from('announcements')
             .select('*')
             .order('created_at', { descending: true });
-            
+
         if (error) throw error;
-        
+
         const board = document.getElementById('bulletin-board');
         if (!board) return;
-        
+
         if (!data || data.length === 0) {
             board.innerHTML = '<p class="text-center text-slate-400 py-6 text-sm col-span-full">系統目前尚無任何公告事項發佈。</p>';
             return;
         }
-        
+
         let htmlContent = '';
         for (let i = 0; i < data.length; i++) {
             const item = data[i];
@@ -336,7 +336,7 @@ async function fetchAnnouncements() {
 async function handleQueryBySid() {
     const sidInput = document.getElementById('q-sid');
     if (!sidInput) return;
-    
+
     const sid = sidInput.value.trim();
     if (sid.length < 6) {
         alert("格式錯誤：請輸入完整的六位數字學號。");
@@ -345,14 +345,14 @@ async function handleQueryBySid() {
 
     toggleLoading(true);
     const resBox = document.getElementById('query-result');
-    
+
     try {
         // 第一階段：查詢學生基本資料與班級座號
         const { data: studentData, error: stuError } = await _supabase.from('students')
             .select('*')
             .eq('student_id', sid)
             .single();
-            
+
         if (stuError || !studentData) {
             toggleLoading(false);
             alert("查無結果：資料庫中找不到此學號，請確認輸入無誤。");
@@ -365,19 +365,19 @@ async function handleQueryBySid() {
             .eq('class_name', studentData.class_name)
             .eq('seat_number', studentData.seat_number)
             .limit(1);
-            
+
         // 第三階段：查詢點名簽到退紀錄
         const { data: attData } = await _supabase.from('attendance')
             .select('*')
             .eq('student_id', sid);
-            
+
         toggleLoading(false);
         resBox.classList.remove('hidden');
-        
+
         const currentRegistration = regData && regData.length > 0 ? regData[0] : null;
         let assignedLocation = '尚未分配任何掃區';
         let currentStatus = '尚未建立狀態';
-        
+
         if (currentRegistration) {
             const matchedArea = allAreas.find(area => area.id === currentRegistration.area_id);
             if (matchedArea) {
@@ -385,7 +385,7 @@ async function handleQueryBySid() {
             }
             currentStatus = currentRegistration.status || '等待糾察覆核中';
         }
-        
+
         // 渲染結果區塊
         let resultHtml = `
             <div class="flex justify-between items-center mb-4 border-b pb-2">
@@ -398,17 +398,17 @@ async function handleQueryBySid() {
             </p>
             <div class="space-y-2">
         `;
-        
+
         const sessionTypes = ['第一次返校', '第二次返校'];
         for (let j = 0; j < sessionTypes.length; j++) {
             const sessionName = sessionTypes[j];
             const logMatch = attData ? attData.find(record => record.session_type === sessionName) : null;
             const isCompleted = logMatch && logMatch.check_out;
-            
+
             const borderClass = isCompleted ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200';
             const textClass = isCompleted ? 'text-emerald-700' : 'text-rose-600';
             const statusLabel = isCompleted ? '[已簽退]' : '[未完成]';
-            
+
             resultHtml += `
                 <div class="p-3 rounded-2xl border ${borderClass}">
                     <p class="text-xs font-bold ${textClass}">${statusLabel} ${sessionName}</p>
@@ -420,7 +420,7 @@ async function handleQueryBySid() {
         }
         resultHtml += '</div>';
         resBox.innerHTML = resultHtml;
-        
+
     } catch (err) {
         toggleLoading(false);
         console.error("執行查詢時發生嚴重錯誤:", err);
@@ -441,34 +441,34 @@ async function fetchAreas() {
         const { data: areasData, error: areasError } = await _supabase.from('areas')
             .select('*')
             .order('class_name');
-            
+
         if (areasError) throw areasError;
-        
+
         const { data: regsData, error: regsError } = await _supabase.from('registrations')
             .select('area_id');
-            
+
         if (regsError) throw regsError;
-        
+
         toggleLoading(false);
         allAreas = areasData || [];
-        
+
         const selectElement = document.getElementById('stu-area');
         if (!selectElement) return;
-        
+
         let optionsHtml = '';
         for (let k = 0; k < allAreas.length; k++) {
             const areaItem = allAreas[k];
             const assignedCount = (regsData || []).filter(r => r.area_id === areaItem.id).length;
             const remainingSpots = areaItem.max_count - assignedCount;
             const isFullyBooked = remainingSpots <= 0;
-            
+
             const disableAttr = isFullyBooked ? 'disabled' : '';
             const statusText = isFullyBooked ? '已無名額' : `尚餘 ${remainingSpots} 個名額`;
-            
+
             optionsHtml += `<option value="${areaItem.id}" ${disableAttr}>[${areaItem.class_name}班負責] ${areaItem.location} (狀態：${statusText})</option>`;
         }
         selectElement.innerHTML = optionsHtml;
-        
+
     } catch (error) {
         toggleLoading(false);
         console.error("載入掃區資料庫失敗:", error);
@@ -491,7 +491,7 @@ async function handleAllocation() {
     }
 
     toggleLoading(true);
-    
+
     try {
         // 第一階段：驗證通行碼權限
         const isAuthorized = await verifyRpc('password1', passcodeValue);
@@ -500,7 +500,7 @@ async function handleAllocation() {
             alert("授權失敗：股長通行碼輸入錯誤，請重新確認。");
             return;
         }
-        
+
         // 第二階段：檢查掃區班級限制
         const selectedArea = allAreas.find(area => String(area.id) === areaIdValue);
         if (!selectedArea) {
@@ -508,7 +508,7 @@ async function handleAllocation() {
             alert("系統錯誤：找不到對應的掃區資料。");
             return;
         }
-        
+
         if (String(selectedArea.class_name) !== clsValue) {
             toggleLoading(false);
             alert(`分配限制攔截：所選之掃區僅開放給「${selectedArea.class_name}」班級的學生進行分配作業。`);
@@ -521,9 +521,9 @@ async function handleAllocation() {
             seat_number: seatValue,
             area_id: areaIdValue
         };
-        
+
         const { error: insertError } = await _supabase.from('registrations').insert([insertPayload]);
-        
+
         toggleLoading(false);
         if (insertError) {
             console.error("寫入分配資料失敗:", insertError);
@@ -533,7 +533,7 @@ async function handleAllocation() {
             await fetchAreas();
             document.getElementById('stu-seat').value = '';
         }
-        
+
     } catch (error) {
         toggleLoading(false);
         console.error("分配程序發生例外狀況:", error);
@@ -554,10 +554,10 @@ async function fetchRegistrationsByArea() {
         if (allAreas.length === 0) {
             await fetchAreas();
         }
-        
+
         const { data: registrationsData, error: regsError } = await _supabase.from('registrations')
             .select('*');
-            
+
         if (regsError) throw regsError;
         toggleLoading(false);
 
@@ -569,14 +569,14 @@ async function fetchRegistrationsByArea() {
         for (let a = 0; a < allAreas.length; a++) {
             const currentArea = allAreas[a];
             const studentsInArea = (registrationsData || []).filter(reg => reg.area_id === currentArea.id);
-            
+
             let pendingStudentsCount = 0;
             for (let s = 0; s < studentsInArea.length; s++) {
                 if (studentsInArea[s].status !== '合格') {
                     pendingStudentsCount++;
                 }
             }
-            
+
             // 只有當該區域有學生存在時，才列入審核清單
             if (studentsInArea.length > 0) {
                 groupedData.push({
@@ -595,7 +595,7 @@ async function fetchRegistrationsByArea() {
         let outputHtml = '';
         for (let g = 0; g < groupedData.length; g++) {
             const group = groupedData[g];
-            
+
             let namesStringArray = [];
             for (let n = 0; n < group.studentsList.length; n++) {
                 const stu = group.studentsList[n];
@@ -605,7 +605,7 @@ async function fetchRegistrationsByArea() {
                 namesStringArray.push(`<span class="${colorClass}">${stu.seat_number}號${tag}</span>`);
             }
             const namesDisplay = namesStringArray.join('、');
-            
+
             let actionButtonsHtml = '';
             if (group.pendingCount > 0) {
                 actionButtonsHtml = `
@@ -615,7 +615,7 @@ async function fetchRegistrationsByArea() {
             } else {
                 actionButtonsHtml = '<span class="text-emerald-500 text-xs font-bold border border-emerald-200 bg-emerald-50 px-2 py-1 rounded">該區已全數通過</span>';
             }
-            
+
             outputHtml += `
                 <tr class="border-b hover:bg-slate-50 transition duration-150">
                     <td class="p-4">
@@ -648,15 +648,15 @@ async function fetchRegistrationsByArea() {
 async function auditArea(areaId, targetStatus) {
     const pwdInput = document.getElementById('inspector-pwd');
     if (!pwdInput) return;
-    
+
     const pwdValue = pwdInput.value;
     if (!pwdValue) {
         alert("操作拒絕：必須輸入糾察專屬授權密碼才能執行覆核。");
         return;
     }
-    
+
     toggleLoading(true);
-    
+
     try {
         const isAuthorized = await verifyRpc('password', pwdValue);
         if (!isAuthorized) {
@@ -668,9 +668,9 @@ async function auditArea(areaId, targetStatus) {
         const { error: updateError } = await _supabase.from('registrations')
             .update({ status: targetStatus })
             .eq('area_id', areaId);
-            
+
         toggleLoading(false);
-        
+
         if (updateError) {
             console.error("批次更新狀態失敗:", updateError);
             alert("資料庫更新失敗，請檢查網路連線。");
@@ -678,7 +678,7 @@ async function auditArea(areaId, targetStatus) {
             // 更新成功後，重新抓取並渲染覆核清單
             await fetchRegistrationsByArea();
         }
-        
+
     } catch (error) {
         toggleLoading(false);
         console.error("覆核程序發生例外錯誤:", error);
@@ -696,22 +696,22 @@ async function saveAnnouncement() {
     const titleElement = document.getElementById('ann-title');
     const contentElement = document.getElementById('ann-content');
     if (!titleElement || !contentElement) return;
-    
+
     const titleStr = titleElement.value.trim();
     const contentStr = contentElement.value.trim();
-    
+
     if (!titleStr) {
         alert("發佈失敗：公告標題不得為空白。");
         return;
     }
-    
+
     toggleLoading(true);
     try {
         const { error } = await _supabase.from('announcements')
             .insert([{ title: titleStr, content: contentStr }]);
-            
+
         toggleLoading(false);
-        
+
         if (error) {
             alert("寫入公告失敗：" + error.message);
         } else {
@@ -734,7 +734,7 @@ async function saveAnnouncement() {
 async function deleteAnnouncement(announcementId) {
     const isConfirmed = confirm("確定要永久刪除此篇公告訊息嗎？");
     if (!isConfirmed) return;
-    
+
     toggleLoading(true);
     try {
         await _supabase.from('announcements').delete().eq('id', announcementId);
@@ -753,19 +753,19 @@ async function deleteAnnouncement(announcementId) {
 async function downloadAbsentees() {
     const sessionTarget = prompt("請輸入欲匯出名單的目標梯次名稱 (例如：第一次返校)：", "第一次返校");
     if (!sessionTarget) return;
-    
+
     toggleLoading(true);
     try {
         // 抓取全體學生名單
         const { data: allStudents, error: stuErr } = await _supabase.from('students').select('*');
         if (stuErr) throw stuErr;
-        
+
         // 抓取在該梯次已經有 'check_out' 時間紀錄的學生 ID
         const { data: presentLogs, error: logErr } = await _supabase.from('attendance')
             .select('student_id')
             .eq('session_type', sessionTarget)
             .not('check_out', 'is', null);
-            
+
         if (logErr) throw logErr;
         toggleLoading(false);
 
@@ -774,7 +774,7 @@ async function downloadAbsentees() {
         for (let idx = 0; idx < presentLogs.length; idx++) {
             attendedIdSet.add(presentLogs[idx].student_id);
         }
-        
+
         // 過濾出尚未簽退的學生
         const absenteeList = [];
         for (let idx = 0; idx < allStudents.length; idx++) {
@@ -798,7 +798,7 @@ async function downloadAbsentees() {
         document.body.appendChild(anchorElement);
         anchorElement.click();
         document.body.removeChild(anchorElement);
-        
+
     } catch (err) {
         toggleLoading(false);
         console.error("產生匯出報表時發生錯誤", err);
@@ -813,19 +813,19 @@ async function loadRollCall() {
     const inputElement = document.getElementById('roll-cls');
     const sessionElement = document.getElementById('roll-session');
     if (!inputElement || !sessionElement) return;
-    
+
     const inputValue = inputElement.value.trim();
     const sessionValue = sessionElement.value;
-    
+
     if (!inputValue) {
         alert("請提供搜尋條件。");
         return;
     }
-    
+
     toggleLoading(true);
     try {
         let queryBuilder = _supabase.from('students').select('*');
-        
+
         // 判斷是使用學號精確查詢，還是使用班級陣列查詢
         if (inputValue.length >= 6) {
             queryBuilder = queryBuilder.eq('student_id', inputValue);
@@ -833,37 +833,37 @@ async function loadRollCall() {
             const classArray = inputValue.split(/[\s,]+/);
             queryBuilder = queryBuilder.in('class_name', classArray);
         }
-        
+
         const { data: studentsData, error: qError } = await queryBuilder.order('class_name').order('seat_number');
         if (qError) throw qError;
-        
+
         const { data: logsData, error: lError } = await _supabase.from('attendance')
             .select('*')
             .eq('session_type', sessionValue);
         if (lError) throw lError;
-            
+
         toggleLoading(false);
-        
+
         const listBody = document.getElementById('roll-list');
         if (!listBody) return;
-        
+
         if (!studentsData || studentsData.length === 0) {
             listBody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-slate-500">查無符合條件的資料，請確認搜尋關鍵字。</td></tr>';
             return;
         }
-        
+
         let trHtml = '';
         for (let i = 0; i < studentsData.length; i++) {
             const stu = studentsData[i];
             const logRecord = logsData ? logsData.find(l => l.student_id === stu.student_id) : null;
-            
+
             let roleStyleClass = 'bg-slate-100 text-slate-500';
             if (stu.role === '衛生糾察') {
                 roleStyleClass = 'bg-blue-100 text-blue-800 border border-blue-200';
             } else if (stu.role === '環境糾察') {
                 roleStyleClass = 'bg-emerald-100 text-emerald-800 border border-emerald-200';
             }
-            
+
             trHtml += `
                 <tr class="border-b hover:bg-slate-50 transition">
                     <td class="p-3 align-middle">
@@ -885,7 +885,7 @@ async function loadRollCall() {
             `;
         }
         listBody.innerHTML = trHtml;
-        
+
     } catch (err) {
         toggleLoading(false);
         console.error("載入點名名單時發生錯誤", err);
@@ -901,28 +901,28 @@ async function doRoll(sid, actionType) {
     const sessionElement = document.getElementById('roll-session');
     if (!sessionElement) return;
     const sessionTarget = sessionElement.value;
-    
+
     toggleLoading(true);
     try {
         const currentTimeString = new Date().toISOString();
         const datePartString = currentTimeString.split('T')[0];
-        
-        const payloadObject = { 
-            student_id: sid, 
-            session_type: sessionTarget, 
-            roll_date: datePartString 
+
+        const payloadObject = {
+            student_id: sid,
+            session_type: sessionTarget,
+            roll_date: datePartString
         };
-        
+
         if (actionType === 'in') {
             payloadObject.check_in = currentTimeString;
         } else {
             payloadObject.check_out = currentTimeString;
         }
-        
+
         // 使用 upsert 進行資料的新增或更新，透過 student_id 與 session_type 作為衝突判斷基準
         const { error } = await _supabase.from('attendance')
             .upsert(payloadObject, { onConflict: 'student_id, session_type' });
-            
+
         toggleLoading(false);
         if (error) {
             console.error("寫入點名資料庫失敗", error);
@@ -946,12 +946,12 @@ async function saveStudentRole() {
     const classInput = document.getElementById('m-cls').value.trim();
     const seatInput = document.getElementById('m-seat').value.trim();
     const roleSelect = document.getElementById('m-role').value;
-    
+
     if (!classInput || !seatInput) {
         alert("操作中斷：請填寫目標班級與座號資訊。");
         return;
     }
-    
+
     toggleLoading(true);
     try {
         // 直接使用 class_name 與 seat_number 作為雙重鎖定條件
@@ -960,9 +960,9 @@ async function saveStudentRole() {
             .eq('class_name', classInput)
             .eq('seat_number', seatInput)
             .select();
-            
+
         toggleLoading(false);
-        
+
         if (error) {
             alert("資料庫更新拒絕：" + error.message);
         } else if (!data || data.length === 0) {
@@ -988,14 +988,14 @@ async function resetAllRoles() {
         alert("安全機制啟動：輸入字串不符，操作已強制終止。");
         return;
     }
-    
+
     toggleLoading(true);
     try {
         // 利用不等於條件進行全表大量更新
         const { error } = await _supabase.from('students')
             .update({ role: '一般學生' })
             .neq('student_id', '0');
-            
+
         toggleLoading(false);
         if (error) {
             alert("批次更新失敗：" + error.message);
@@ -1015,15 +1015,15 @@ async function resetAllRoles() {
 function editArea(targetId) {
     const targetArea = allAreas.find(item => item.id === targetId);
     if (!targetArea) return;
-    
+
     document.getElementById('a-id').value = targetArea.id;
     document.getElementById('a-loc').value = targetArea.location;
     document.getElementById('a-cls').value = targetArea.class_name;
     document.getElementById('a-max').value = targetArea.max_count;
-    
+
     const saveBtn = document.getElementById('btn-save-area');
     if (saveBtn) saveBtn.innerText = '提交修改設定';
-    
+
     const cancelBtn = document.getElementById('btn-cancel-edit');
     if (cancelBtn) cancelBtn.classList.remove('hidden');
 }
@@ -1036,10 +1036,10 @@ function cancelEditArea() {
     document.getElementById('a-loc').value = '';
     document.getElementById('a-cls').value = '';
     document.getElementById('a-max').value = '';
-    
+
     const saveBtn = document.getElementById('btn-save-area');
     if (saveBtn) saveBtn.innerText = '儲存新增掃區';
-    
+
     const cancelBtn = document.getElementById('btn-cancel-edit');
     if (cancelBtn) cancelBtn.classList.add('hidden');
 }
@@ -1052,20 +1052,20 @@ async function saveArea() {
     const locationValue = document.getElementById('a-loc').value;
     const classValue = document.getElementById('a-cls').value;
     const maxValue = document.getElementById('a-max').value;
-    
+
     if (!locationValue || !classValue) {
         alert("欄位檢查未通過：掃區地點與負責班級為必填項目。");
         return;
     }
-    
+
     toggleLoading(true);
     try {
-        const payloadData = { 
-            location: locationValue, 
-            class_name: classValue, 
-            max_count: parseInt(maxValue, 10) || 1 
+        const payloadData = {
+            location: locationValue,
+            class_name: classValue,
+            max_count: parseInt(maxValue, 10) || 1
         };
-        
+
         let responseObj;
         if (idValue) {
             // 執行更新指令
@@ -1074,7 +1074,7 @@ async function saveArea() {
             // 執行插入指令
             responseObj = await _supabase.from('areas').insert([payloadData]);
         }
-        
+
         toggleLoading(false);
         if (responseObj.error) {
             alert("掃區資料儲存失敗：" + responseObj.error.message);
@@ -1095,7 +1095,7 @@ async function saveArea() {
 async function deleteArea(targetId) {
     const isConfirmed = confirm('連鎖效應警告：刪除該掃區將會導致依附於此掃區的學生登記紀錄失效。確定仍要繼續執行刪除？');
     if (!isConfirmed) return;
-    
+
     toggleLoading(true);
     try {
         await _supabase.from('areas').delete().eq('id', targetId);
@@ -1117,7 +1117,7 @@ async function handleClearData(targetEntityName) {
         alert("防護機制：授權驗證碼不符，刪除程序已安全中止。");
         return;
     }
-    
+
     toggleLoading(true);
     try {
         let databaseTableName = '';
@@ -1128,12 +1128,12 @@ async function handleClearData(targetEntityName) {
         } else if (targetEntityName === '掃區紀錄') {
             databaseTableName = 'areas';
         }
-        
+
         if (databaseTableName) {
             const { error } = await _supabase.from(databaseTableName).delete().neq('id', 0);
             if (error) throw error;
         }
-        
+
         toggleLoading(false);
         alert(`系統資料庫回報：指定的 ${targetEntityName} 資料表內容已全數抹除乾淨。`);
         await refreshAdminPanel();
@@ -1156,9 +1156,9 @@ async function refreshAdminPanel() {
             _supabase.from('registrations').select('*'),
             _supabase.from('announcements').select('*').order('created_at', { descending: true })
         ]);
-        
+
         toggleLoading(false);
-        
+
         allAreas = areasResponse.data || [];
         const allRegistrations = regsResponse.data || [];
         const allAnnouncements = annsResponse.data || [];
@@ -1175,9 +1175,9 @@ async function refreshAdminPanel() {
                         matchedStudents.push(allRegistrations[r]);
                     }
                 }
-                
+
                 const remainingCount = currentArea.max_count - matchedStudents.length;
-                
+
                 let studentsTagHtml = '';
                 for (let ms = 0; ms < matchedStudents.length; ms++) {
                     const stuRec = matchedStudents[ms];
@@ -1190,13 +1190,13 @@ async function refreshAdminPanel() {
                         </span>
                     `;
                 }
-                
+
                 if (studentsTagHtml === '') {
                     studentsTagHtml = '<span class="text-slate-400 text-xs italic bg-slate-50 px-2 py-1 rounded">無學生分配至此區</span>';
                 }
-                
+
                 const remainColorClass = remainingCount <= 0 ? 'text-rose-600' : 'text-emerald-600';
-                
+
                 statusHtmlContent += `
                     <tr class="border-b hover:bg-slate-50 transition">
                         <td class="p-4 align-top">
@@ -1255,7 +1255,7 @@ async function refreshAdminPanel() {
             }
             annManageContainer.innerHTML = annManageHtml;
         }
-        
+
     } catch (error) {
         toggleLoading(false);
         console.error("載入管理員面板資料失敗", error);

@@ -1,94 +1,181 @@
-/* 核心變數設定 */
+/* * 國立陽明交大附中 - 返校打掃管理系統核心樣式
+ * 修正重點：解決簽到按鈕文字隱形、強化表格操作對比度
+ */
+
 :root {
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --bg-main: #f8fafc;
-    --border-color: #e2e8f0;
-    --text-dark: #0f172a;
-    --text-slate: #64748b;
-    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    --black: #000000;
+    --white: #ffffff;
+    --border-bold: 2px solid #000000;
 }
 
-/* 全域設定 */
+/* 基礎重設 */
+* {
+    color: var(--black) !important;
+    border-color: var(--black) !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    transition: none !important;
+}
+
 body {
-    background-color: var(--bg-main) !important;
-    color: var(--text-dark) !important;
+    background-color: var(--white) !important;
     font-family: "Inter", -apple-system, sans-serif;
+    margin: 0;
+    padding: 20px;
 }
 
-/* 導覽列：縮小高度 */
+/* 標題與導覽 */
+h1 {
+    font-size: 24px !important;
+    font-weight: 900 !important;
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 30px !important;
+}
+
 nav {
     display: flex !important;
-    background: #ffffff;
-    padding: 4px;
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
-    margin: 0 auto 32px auto;
+    border: var(--border-bold) !important;
+    background: var(--white) !important;
     width: fit-content;
+    margin: 0 auto 30px auto;
 }
 
 nav button {
-    padding: 8px 16px !important; /* 縮小導覽按鈕 */
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    border-radius: 6px !important;
+    padding: 10px 20px !important;
+    font-weight: 900 !important;
     border: none !important;
-    background: transparent !important;
-    color: var(--text-slate) !important;
+    border-right: 1px solid var(--black) !important;
+    background: var(--white) !important;
+    cursor: pointer;
+}
+
+nav button:last-child {
+    border-right: none !important;
 }
 
 .tab-active {
-    background-color: #eff6ff !important;
-    color: var(--primary) !important;
+    background: var(--black) !important;
+    color: var(--white) !important;
 }
 
-/* 卡片設計 */
-.bg-white, section > div, .bg-slate-100 {
-    background: #ffffff !important;
-    border: 1px solid var(--border-color) !important;
-    border-radius: 12px !important;
-    box-shadow: var(--card-shadow) !important;
-    padding: 24px !important; /* 縮小內距讓視覺更緊湊 */
-    margin-bottom: 24px !important;
+/* 區塊容器 */
+.bg-white,
+section>div,
+#query-result {
+    background-color: var(--white) !important;
+    border: var(--border-bold) !important;
+    padding: 20px !important;
+    margin-bottom: 20px !important;
 }
 
 /* 輸入框 */
-input, select {
-    background: #ffffff !important;
-    border: 1px solid var(--border-color) !important;
-    border-radius: 8px !important;
-    padding: 10px !important; /* 縮小輸入框高度 */
-    font-size: 14px !important;
-    outline: none !important;
+input,
+select,
+textarea {
+    background: var(--white) !important;
+    border: var(--border-bold) !important;
+    padding: 10px !important;
+    font-weight: 700 !important;
 }
 
-/* 功能按鈕：顯著縮小尺寸 */
-button:not(nav button) {
-    background-color: var(--primary) !important;
-    color: #ffffff !important;
-    font-weight: 600 !important;
-    padding: 8px 18px !important; /* 核心修改：大幅縮減內距 */
-    font-size: 14px !important;    /* 核心修改：字體微調 */
-    border-radius: 8px !important;
-    border: none !important;
-    cursor: pointer;
-    width: auto !important;        /* 核心修改：取消強制滿幅 */
+/* 點名系統按鈕專屬修正 */
+/* 「執行簽到」：強制改為黑底白字 */
+button.bg-blue-50,
+button[onclick*="'in'"] {
+    background-color: var(--black) !important;
+    color: var(--white) !important;
+    border: var(--border-bold) !important;
+    padding: 8px 16px !important;
+    font-weight: 900 !important;
     display: inline-block !important;
-    transition: background-color 0.2s ease !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-button:not(nav button):hover {
-    background-color: var(--primary-hover) !important;
+/* 「執行簽退」：強制改為白底黑字 */
+button.bg-emerald-50,
+button[onclick*="'out'"] {
+    background-color: var(--white) !important;
+    color: var(--black) !important;
+    border: var(--border-bold) !important;
+    padding: 8px 16px !important;
+    font-weight: 900 !important;
+    display: inline-block !important;
+    visibility: visible !important;
 }
 
-/* 標題 */
-h1 {
-    font-size: 24px !important; /* 標題也同步微調，避免頭重腳輕 */
-    font-weight: 800 !important;
-    color: #000000 !important;
+/* 懸浮效果：簡單反轉 */
+button.bg-blue-50:hover {
+    background-color: var(--white) !important;
+    color: var(--black) !important;
 }
 
-/* 表格 */
-tr {
-    border-bottom: 1px solid var(--border-color) !important;
+button.bg-emerald-50:hover {
+    background-color: var(--black) !important;
+    color: var(--white) !important;
+}
+
+/* 其他一般按鈕 */
+button:not(nav button):not(.bg-blue-50):not(.bg-emerald-50) {
+    background-color: var(--black) !important;
+    color: var(--white) !important;
+    border: var(--border-bold) !important;
+    padding: 10px 20px !important;
+    font-weight: 900 !important;
+}
+
+/* 次要按鈕（如隱私聲明） */
+button.bg-slate-100,
+button[onclick*="toggleLicense"] {
+    background-color: var(--white) !important;
+    color: var(--black) !important;
+    font-size: 11px !important;
+    padding: 4px 12px !important;
+    border: 1px solid var(--black) !important;
+}
+
+/* 表格樣式優化 */
+table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: var(--border-bold) !important;
+}
+
+th {
+    background: var(--black) !important;
+    color: var(--white) !important;
+    padding: 12px !important;
+    text-align: left;
+}
+
+td {
+    border: 1px solid var(--black) !important;
+    padding: 12px !important;
+    background: var(--white) !important;
+    vertical-align: middle;
+}
+
+/* 狀態標籤 */
+.rounded-full {
+    border: 1px solid var(--black) !important;
+    padding: 2px 8px !important;
+    font-size: 11px !important;
+    background: var(--white) !important;
+}
+
+/* 彈出視窗 */
+#license-modal {
+    background: rgba(0, 0, 0, 0.8) !important;
+}
+
+#license-modal>div {
+    border: 4px solid var(--black) !important;
+    background: var(--white) !important;
+}
+
+/* 修正截圖中「一般學生」文字被夾在雙線框的問題 */
+.bg-slate-100.text-slate-500 {
+    background: var(--white) !important;
+    border: 1px solid var(--black) !important;
 }
