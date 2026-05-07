@@ -14,18 +14,21 @@
 
     <div class="max-w-6xl mx-auto py-10 px-4 flex-grow w-full">
         <header class="text-center mb-10">
-            <h1 class="text-3xl font-black text-slate-900 tracking-tight">返校打掃管理系統</h1>
+            <h1 class="text-4xl font-black text-slate-900 tracking-tight">返校打掃管理系統</h1>
             <p class="text-slate-400 mt-2 text-xs font-mono tracking-widest uppercase">國立陽明交通大學附屬竹北高級中學學務處衛生組</p>
         </header>
 
         <nav class="flex flex-wrap border-b border-slate-200 mb-8 justify-center gap-2 md:gap-8">
             <button onclick="switchTab('query')" id="tab-query"
                 class="tab-active py-2 px-4 font-bold border-blue-600 text-blue-600 transition duration-300">公告查詢</button>
-            <button onclick="switchTab('allocation')" id="tab-allocation"
+            
+            <button onclick="void switchTab('allocation')" id="tab-allocation"
                 class="py-2 px-4 font-bold text-slate-500 border-transparent border-b-2 transition duration-300">掃區分配</button>
-            <button onclick="switchTab('inspector')" id="tab-inspector"
+            
+            <button onclick="void switchTab('inspector')" id="tab-inspector"
                 class="py-2 px-4 font-bold text-slate-500 border-transparent border-b-2 transition duration-300">區域覆核</button>
-            <button onclick="switchTab('admin')" id="tab-admin"
+            
+            <button onclick="void switchTab('admin')" id="tab-admin"
                 class="py-2 px-4 font-bold text-slate-500 border-transparent border-b-2 transition duration-300">管理後台</button>
         </nav>
 
@@ -33,7 +36,41 @@
         <section id="view-query" class="tab-view space-y-8 animate-fade">
             <div id="bulletin-board" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             </div>
-
+        
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="https://line.me/ti/g2/3K4ju-CEfez6H1voKW1nO7VmIwNWM2ckzVVLhA?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank" 
+                    class="group flex items-center justify-between bg-emerald-50 p-6 rounded-[2.5rem] border border-emerald-100 shadow-sm hover:shadow-md transition-all duration-300 active:scale-[0.98]">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-emerald-500 text-white p-3 rounded-2xl shadow-lg shadow-emerald-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-emerald-900 text-lg">加入返校 LINE 群組</h3>
+                            <p class="text-xs text-emerald-600">加入請改名班級座號</p>
+                        </div>
+                    </div>
+                    <span class="text-emerald-400 group-hover:translate-x-1 transition-transform">→</span>
+                </a>
+        
+                <a href="https://drive.google.com/file/d/1tGr72_H9ZR-N1yilLsJmfe0-SzXKX774/view?usp=sharing" target="_blank"
+                    class="group flex items-center justify-between bg-blue-50 p-6 rounded-[2.5rem] border border-blue-100 shadow-sm hover:shadow-md transition-all duration-300 active:scale-[0.98]">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-blue-600 text-white p-3 rounded-2xl shadow-lg shadow-blue-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-blue-900 text-lg">全校掃區地圖</h3>
+                            <p class="text-xs text-blue-600">查找地點與打掃路徑</p>
+                        </div>
+                    </div>
+                    <span class="text-blue-400 group-hover:translate-x-1 transition-transform">→</span>
+                </a>
+            </div>
+        
             <div class="bg-slate-200/50 rounded-[2.5rem] p-8 text-center border border-slate-200 shadow-inner">
                 <div class="max-w-md mx-auto">
                     <h2 class="text-xl font-black mb-4">查詢個人打掃狀態</h2>
@@ -71,8 +108,9 @@
                     </div>
                     <div class="space-y-1">
                         <label class="text-[10px] font-bold text-amber-400 ml-2 uppercase">Passcode</label>
-                        <input type="password" id="alloc-passcode" placeholder="股長通行碼"
-                            class="w-full border p-4 rounded-2xl bg-amber-50 outline-none focus:ring-4 focus:ring-amber-100">
+                        <input type="password" id="alloc-passcode" class="hidden">
+                        <div class="w-full border p-4 rounded-2xl bg-emerald-50 text-emerald-600 font-bold text-sm flex items-center justify-center">
+                        </div>
                     </div>
                     <div class="md:col-span-3 space-y-1">
                         <label class="text-[10px] font-bold text-slate-400 ml-2 uppercase">Target Area</label>
@@ -88,21 +126,35 @@
         </section>
 
         <section id="view-inspector" class="tab-view hidden space-y-4 animate-fade">
-            <div class="bg-white shadow-lg rounded-2xl p-6 border border-slate-100">
-                <label class="block text-xs font-black text-rose-500 mb-2 ml-1 uppercase">Inspector Passcode</label>
-                <input type="password" id="inspector-pwd" placeholder="輸入糾察授權密碼"
-                    class="w-full md:w-1/3 border p-4 rounded-2xl outline-none focus:ring-4 focus:ring-rose-50 bg-rose-50/20">
+            <div class="bg-white shadow-lg rounded-2xl p-6 border border-slate-100 flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-black text-rose-600">區域覆核系統</h2>
+                    <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest mt-1">
+                        ✓ 糾察權限已核可 (Inspector Authorized)
+                    </p>
+                </div>
+                
+                <input type="password" id="inspector-pwd" class="hidden">
+                
+                <div class="text-right">
+                    <span class="text-[10px] bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full font-bold">
+                        免重複輸入模式
+                    </span>
+                </div>
             </div>
+        
             <div class="bg-white shadow-xl rounded-[2rem] p-6 border border-slate-100">
                 <div class="flex justify-between items-center mb-6 border-b pb-4">
                     <h2 class="text-xl font-black">待覆核掃區清單</h2>
                     <button onclick="fetchRegistrationsByArea()"
-                        class="text-blue-500 text-xs font-bold bg-blue-50 px-3 py-1.5 rounded-xl hover:bg-blue-100 transition">刷新列表</button>
+                        class="text-blue-500 text-xs font-bold bg-blue-50 px-3 py-1.5 rounded-xl hover:bg-blue-100 transition">
+                        刷新列表
+                    </button>
                 </div>
                 <div class="overflow-x-auto hide-scrollbar">
                     <table class="w-full text-left text-sm">
                         <tbody id="inspector-list">
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>

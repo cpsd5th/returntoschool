@@ -205,6 +205,45 @@ async function verifyRpc(key, input) {
  * @param {string} tab - 目標分頁代碼 ('query', 'allocation', 'inspector', 'admin')
  */
 async function switchTab(tab) {
+    if (tab === 'allocation') {
+        const inputPw = prompt("本頁面僅限衛生股長操作，請輸入股長通行碼：");
+        if (!inputPw) return; // 使用者按取消或沒輸入則不跳轉
+
+        toggleLoading(true);
+        const isAuthorized = await verifyRpc('password1', inputPw);
+        toggleLoading(false);
+
+        if (!isAuthorized) {
+            alert("授權失敗：股長通行碼輸入錯誤，無法進入分配系統。");
+            return; // 驗證失敗，停留在原頁面
+        }
+
+        // 驗證成功，將密碼填入隱藏欄位，供 handleAllocation 使用
+        const passcodeField = document.getElementById('alloc-passcode');
+        if (passcodeField) {
+            passcodeField.value = inputPw;
+        }
+    }
+    if (tab === 'inspector') {
+        const inputPw = prompt("本頁面僅限糾察操作，請輸入糾察授權密碼：");
+        if (!inputPw) return;
+
+        toggleLoading(true);
+        // 注意：這裡 RPC 驗證的 key 是 'password' (原本代碼中的糾察密碼 key)
+        const isAuthorized = await verifyRpc('password', inputPw);
+        toggleLoading(false);
+
+        if (!isAuthorized) {
+            alert("驗證失敗：糾察密碼錯誤。");
+            return;
+        }
+
+        // 驗證成功，將密碼填入原本的 inspector-pwd 欄位 (可設為隱藏)
+        const inspectorField = document.getElementById('inspector-pwd');
+        if (inspectorField) {
+            inspectorField.value = inputPw;
+        }
+    }
     // 針對管理員分頁進行身分攔截與驗證
     if (tab === 'admin') {
         const { data: authData } = await _supabase.auth.getSession();
@@ -480,28 +519,32 @@ async function fetchAreas() {
  * 處理衛生股長提交掃區分配的請求
  */
 async function handleAllocation() {
+    // 從頁面元素獲取值
     const clsValue = document.getElementById('stu-class').value;
     const seatValue = document.getElementById('stu-seat').value;
     const areaIdValue = document.getElementById('stu-area').value;
+    // 這裡會抓到我們在 switchTab 階段就填入的驗證碼
     const passcodeValue = document.getElementById('alloc-passcode').value;
 
-    if (!clsValue || !seatValue || !areaIdValue || !passcodeValue) {
-        alert("操作拒絕：請完整輸入分配所需的所有資訊與股長通行碼。");
+    // 檢查欄位是否齊全 (現在不用檢查密碼框，因為沒輸入密碼根本進不來這頁)
+    if (!clsValue || !seatValue || !areaIdValue) {
+        alert("操作拒絕：請完整填寫班級與座號。");
         return;
     }
 
     toggleLoading(true);
 
     try {
-        // 第一階段：驗證通行碼權限
+        // 第一階段：二次驗證 (選用，確保安全)
+        // 雖然進入時驗證過，但在送出資料時再過一次驗證是最保險的做法
         const isAuthorized = await verifyRpc('password1', passcodeValue);
         if (!isAuthorized) {
             toggleLoading(false);
-            alert("授權失敗：股長通行碼輸入錯誤，請重新確認。");
+            alert("授權過期或通行碼錯誤，請重新整理網頁後登入。");
             return;
         }
 
-        // 第二階段：檢查掃區班級限制
+        // 第二階段：檢查掃區班級限制 (維持原樣)
         const selectedArea = allAreas.find(area => String(area.id) === areaIdValue);
         if (!selectedArea) {
             toggleLoading(false);
@@ -511,11 +554,11 @@ async function handleAllocation() {
 
         if (String(selectedArea.class_name) !== clsValue) {
             toggleLoading(false);
-            alert(`分配限制攔截：所選之掃區僅開放給「${selectedArea.class_name}」班級的學生進行分配作業。`);
+            alert(`分配限制攔截：所選之掃區僅開放給「${selectedArea.class_name}」班級的學生。`);
             return;
         }
 
-        // 第三階段：執行寫入資料庫作業
+        // 第三階段：執行寫入 (維持原樣)
         const insertPayload = {
             class_name: clsValue,
             seat_number: seatValue,
@@ -526,18 +569,18 @@ async function handleAllocation() {
 
         toggleLoading(false);
         if (insertError) {
-            console.error("寫入分配資料失敗:", insertError);
-            alert("資料寫入失敗：該名學生可能已經存在分配紀錄，或是該掃區名額在剛才已經被佔滿。");
+            alert("寫入失敗：該名學生可能已有紀錄，或名額已滿。");
         } else {
-            alert("分配作業完成：已成功寫入系統資料庫。");
-            await fetchAreas();
+            alert("分配作業成功！");
+            await fetchAreas(); // 更新名額
+            // 只清空座號，保留班級與掃區，方便衛生股長連續幫同班同學輸入
             document.getElementById('stu-seat').value = '';
         }
 
     } catch (error) {
         toggleLoading(false);
-        console.error("分配程序發生例外狀況:", error);
-        alert("執行過程中發生未知錯誤。");
+        console.error("分配程序異常:", error);
+        alert("系統發生未知錯誤。");
     }
 }
 
@@ -646,22 +689,22 @@ async function fetchRegistrationsByArea() {
  * @param {string} targetStatus - 欲更新的狀態字串 ('合格' 或是 '需重掃')
  */
 async function auditArea(areaId, targetStatus) {
-    const pwdInput = document.getElementById('inspector-pwd');
-    if (!pwdInput) return;
+    const inspectorPwField = document.getElementById('inspector-pwd');
+    const pwdValue = inspectorPwField ? inspectorPwField.value : '';
 
-    const pwdValue = pwdInput.value;
     if (!pwdValue) {
-        alert("操作拒絕：必須輸入糾察專屬授權密碼才能執行覆核。");
+        alert("操作拒絕：尚未取得糾察授權。請重新進入分頁以觸發密碼驗證。");
         return;
     }
 
     toggleLoading(true);
 
     try {
+        // 2. 呼叫 RPC 進行安全性二次驗證 (Key 為 'password')
         const isAuthorized = await verifyRpc('password', pwdValue);
         if (!isAuthorized) {
             toggleLoading(false);
-            alert("身分驗證失敗：糾察密碼錯誤，拒絕寫入。");
+            alert("授權過期或驗證失敗：糾察密碼錯誤，拒絕寫入。");
             return;
         }
 
@@ -675,7 +718,7 @@ async function auditArea(areaId, targetStatus) {
             console.error("批次更新狀態失敗:", updateError);
             alert("資料庫更新失敗，請檢查網路連線。");
         } else {
-            // 更新成功後，重新抓取並渲染覆核清單
+            // 4. 更新成功後，重新抓取並渲染覆核清單
             await fetchRegistrationsByArea();
         }
 
