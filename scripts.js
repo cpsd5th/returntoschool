@@ -205,6 +205,25 @@ async function verifyRpc(key, input) {
  * @param {string} tab - 目標分頁代碼 ('query', 'allocation', 'inspector', 'admin')
  */
 async function switchTab(tab) {
+    if (tab === 'allocation') {
+        const inputPw = prompt("本頁面僅限衛生股長操作，請輸入股長通行碼：");
+        if (!inputPw) return; // 使用者按取消或沒輸入則不跳轉
+
+        toggleLoading(true);
+        const isAuthorized = await verifyRpc('password1', inputPw);
+        toggleLoading(false);
+
+        if (!isAuthorized) {
+            alert("授權失敗：股長通行碼輸入錯誤，無法進入分配系統。");
+            return; // 驗證失敗，停留在原頁面
+        }
+
+        // 驗證成功，將密碼填入隱藏欄位，供 handleAllocation 使用
+        const passcodeField = document.getElementById('alloc-passcode');
+        if (passcodeField) {
+            passcodeField.value = inputPw;
+        }
+    }
     // 針對管理員分頁進行身分攔截與驗證
     if (tab === 'admin') {
         const { data: authData } = await _supabase.auth.getSession();
