@@ -47,10 +47,10 @@ nav button {
     padding: 10px 20px !important;
     font-weight: 900 !important;
     border: none !important;
-    border-right: 1px solid var(--black) !important;
+    border-right: 2px solid var(--black) !important;  /* ← 從 1px 改成 2px */
     background: var(--white) !important;
     cursor: pointer;
-    margin: 0 !important;        /* ← 確保沒有外距 */
+    margin: 0 !important;
     flex-shrink: 0;
 }
 
